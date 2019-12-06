@@ -1,0 +1,237 @@
+
+<div xmlns="http://www.w3.org/1999/html">
+   <style>
+      .popover-class-danger {
+         color: #a94442;
+         background-color: #f2dede;
+         border-color: #ebccd1;
+      }
+
+      .popover-class-warning {
+         color: #8a6d3b;
+         background-color: #fcf8e3;
+         border-color: #faebcc;
+      }
+
+      .func-active {
+         background-color: #F7F7F7;
+      }
+   </style>
+   <div class="col-md-12">
+      <h2><i class="fa fa-github" style="padding-right:5px" aria-hidden="true"></i>Git for TM1</h2>
+   </div>
+   <div class="card-body">
+      <div class="alert alert-primary" role="alert">
+         TM1 Version: <label>{{productVersion}}</label>
+      </div>
+   </div>
+   <uib-tabset>
+       <uib-tab>
+         <uib-tab-heading>
+            Git Deploy
+         </uib-tab-heading>
+           Coming Soon
+        </uib-tab>
+       <uib-tab>
+         <uib-tab-heading>
+            Git Push
+         </uib-tab-heading>
+         <uib-tabset>
+            <uib-tab>
+               <uib-tab-heading>
+                  Push Settings
+               </uib-tab-heading>
+               <div class="card-body" ng-if="options.message">
+                  <button class="btn btn-warning">
+               <span class="fa fa-warning" aria-hidden="true"></span>
+               <span>{{options.message}}</span>
+            </button>
+               </div>
+               <div class="card" >
+                  <div class="card-header" style="padding: 5px 10px;" ng-if="!options.executing && options.queryStatus">
+                     <label>
+                        Push Action Run in {{options.responseTimeMs | num:0}} ms
+                     </label>
+                  </div>
+                  <form>
+                     <div class="input-group mb-3">
+                        <div class="alert alert-dark" role="alert">
+                           Author: {{activeUser}}
+                        </div>
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="alert alert-dark" role="alert">
+                           Email: {{activeUserEmail}}
+                        </div>
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Branch Name:</span>
+                        </div>
+                        <input type="text" class="form-control" ng-model="branch" id="branch" placeholder="master">
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text" >Username:</span>
+                        </div>
+                        <input type="text" class="form-control" ng-model="username" id="username" placeholder="Git User Name">
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Password:</span>
+                        </div>
+                        <input type="password" class="form-control" ng-model="gitpushpw" id="gitpushpw" placeholder="Password">
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Message:</span>
+                        </div>
+                        <textarea class="form-control" id="message" rows="3" ng-model="pushmessage"></textarea>
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Force:</span>
+                        </div>
+                        <select class="form-control" id="sel2" ng-model="gitpushforce">
+                            <option>false</option>
+                            <option>true</option>
+                        </select>
+                     </div>
+                     <div class="input-group mb-3">
+                        <span class="input-group-append">
+                           <button ng-if="!hasPushPlanID" ng-click="gitPushPlan(branch, username, gitpushpw, pushmessage, force)" class="btn btn-warning" title="{{'EXECUTE' | translate}}"> Create Push Plan
+                              <i ng-if="!executing" class="fa fa-fw fa-bolt"></i>
+                              <i ng-if="executing" class="fa fa-refresh fa-spin"></i>
+                           </button>
+                           <button ng-if="hasPushPlanID" ng-click="gitExPushPlan()" class="btn btn-success" title="{{'EXECUTE' | translate}}"> Execute Plan ID: {{pushPlanID}}
+                              <i ng-if="!executing" class="fa fa-fw fa-bolt"></i>
+                              <i ng-if="executing" class="fa fa-refresh fa-spin"></i>
+                           </button>
+                        </span>
+                     </div>
+                  </form>
+               </div>
+            </uib-tab>
+            <uib-tab>
+               <uib-tab-heading>
+                  Push Results
+               </uib-tab-heading>
+               <div class="card-bdy">
+                  <div class="row">
+                           <div class="col-md-12 text-center">
+                              <i ng-if="options.executing" class="fa fa-refresh fa-3x fa-spin"></i>
+                           </div>
+                        </div>
+                        <div class="card" ng-if="!options.executing && options.queryStatus">
+                           <div class="card-header" style="padding: 5px 10px;">
+                              <span>
+                                 <span style="margin-bottom:0px">
+                                 {} Result - Run in {{options.responseTimeMs | num:0}} ms</span>
+                              </span>
+                              <div class="pull-right">
+                                 <span>
+                                    <input type="radio" ng-model="options.resultType" value="json-tree" />
+                                    <span>JSON Tree</span>
+                                 </span>
+                                 <span>
+                                    <input type="radio" ng-model="options.resultType" value="json" />
+                                    <span>JSON</span>
+                                 </span>
+                                 <span>
+                                    <input type="radio" ng-model="options.resultType" value="hjson" />
+                                    <span>HJSON</span>
+                                 </span>
+                              </div>
+                           </div>
+                           <div class="card-body" ng-if="options.message">
+                              <div>
+                                 <button class="btn btn-warning">
+                                    <span class="fa fa-warning" aria-hidden="true"></span>
+                                    <span>{{options.message}}</span>
+                                 </button>
+                              </div>
+                           </div>
+                           <div class="card-body" ng-if="!options.message">
+                              <auto-height>
+                                 <json-formatter ng-if="options.resultType == 'json-tree'" json="options.resultQuery" open="1"></json-formatter>
+                                 <pre ng-if="options.resultType == 'json'">{{options.resultQuery | json}}</pre>
+                                 <pre ng-if="options.resultType == 'hjson'">{{options.resultQuery | hjson}}</pre>
+                              </auto-height>
+                           </div>
+                        </div>
+                  </div>
+            </uib-tab>
+            </uib-tabset>
+      </uib-tab>
+       <uib-tab>
+         <uib-tab-heading>
+            Git Init
+         </uib-tab-heading>
+         <div class="card-body" ng-if="options.message">
+            <button class="btn btn-warning">
+               <span class="fa fa-warning" aria-hidden="true"></span>
+               <span>{{options.message}}</span>
+            </button>
+   </div>
+         <div class="card" >
+            <div class="card-header" style="padding: 5px 10px;" ng-if="!options.executing && options.queryStatus">
+               <label>
+                  Complete: {{options.responseTimeMs | num:0}} ms
+               </label>
+            </div>
+            <form>
+               <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text" id="basic-addon1">URL:</span>
+                  </div>
+                  <input type="url" class="form-control" ng-model="giturl" id="giturl" placeholder="https://github.com/usr/planning_sample.git">
+               </div>
+               <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text" id="basic-addon2">Username:</span>
+                  </div>
+                  <input type="text" class="form-control" ng-model="gitemail" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+               </div>
+               <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text" id="basic-addon3">Password:</span>
+                  </div>
+                  <input type="password" class="form-control" ng-model="gitpw" id="exampleInputPassword1" placeholder="Password">
+               </div>
+               <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text" id="basic-addon5">Deployment:</span>
+                  </div>
+                  <select class="form-control" id="sel1" ng-model="gitdeployment">
+                      <option>dev</option>
+                      <option>qa</option>
+                      <option>prod</option>
+                      <option>other</option>
+                  </select>
+               </div>
+               <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                     <span class="input-group-text" id="basic-addon4">Force:</span>
+                  </div>
+                  <select class="form-control" id="sel2" ng-model="gitforce">
+                      <option>false</option>
+                      <option>true</option>
+                  </select>
+               </div>
+               <div class="input-group mb-3">
+                  <span class="input-group-append">
+                     <button ng-click="gitInit(giturl, gitemail, gitpw, gitdeployment, gitforce)" class="btn btn-warning" title="{{'EXECUTE' | translate}}"> Git Init
+                        <i ng-if="!executing" class="fa fa-fw fa-bolt"></i>
+                        <i ng-if="executing" class="fa fa-refresh fa-spin"></i>
+                     </button>
+                      <button ng-click="gitUninit()" class="btn btn-danger" title="{{'EXECUTE' | translate}}"> Git Uninit
+                        <i ng-if="!executing" class="fa fa-fw fa-bolt"></i>
+                        <i ng-if="executing" class="fa fa-refresh fa-spin"></i>
+                     </button>
+                  </span>
+               </div>
+               </form>
+         </div>
+      </uib-tab>
+   </uib-tabset>
+</div>
