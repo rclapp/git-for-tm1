@@ -28,9 +28,125 @@
    <uib-tabset>
        <uib-tab>
          <uib-tab-heading>
-            Git Deploy
+            Git Pull
          </uib-tab-heading>
-           Coming Soon
+           <uib-tabset>
+            <uib-tab>
+               <uib-tab-heading>
+                  Pull Settings
+               </uib-tab-heading>
+               <div class="card-body" ng-if="options.message">
+                  <button class="btn btn-warning">
+               <span class="fa fa-warning" aria-hidden="true"></span>
+               <span>{{options.message}}</span>
+            </button>
+               </div>
+               <div class="card" >
+                  <div class="card-header" style="padding: 5px 10px;" ng-if="!options.executing && options.queryStatus">
+                     <label>
+                        Pull Action Run in {{options.responseTimeMs | num:0}} ms
+                     </label>
+                  </div>
+                  <form>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Branch Name:</span>
+                        </div>
+                        <input type="text" class="form-control" ng-model="gitpullbranch" id="gitpullbranch" placeholder="source banch">
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text" >Username:</span>
+                        </div>
+                        <input type="text" class="form-control" ng-model="username" id="username" placeholder="Git User Name">
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Password:</span>
+                        </div>
+                        <input type="password" class="form-control" ng-model="gitpullpw" id="gitpullpw" placeholder="Password">
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Execution Mode:</span>
+                        </div>
+                        <select class="form-control" id="executionMode" rows="3" ng-model="executionMode">
+                            <option>SingleCommit</option>
+                        </select>
+                     </div>
+                     <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                           <span class="input-group-text">Force:</span>
+                        </div>
+                        <select class="form-control" id="sel2" ng-model="gitpullforce">
+                            <option>false</option>
+                            <option>true</option>
+                        </select>
+                     </div>
+                     <div class="input-group mb-3">
+                        <span class="input-group-append">
+                           <button ng-if="!hasPullPlanID" ng-click="gitPullPlan(gitpullbranch, username, gitpullpw, executionMode, force)" class="btn btn-warning" title="{{'EXECUTE' | translate}}"> Create Pull Plan
+                              <i ng-if="!executing" class="fa fa-fw fa-bolt"></i>
+                              <i ng-if="executing" class="fa fa-refresh fa-spin"></i>
+                           </button>
+                           <button ng-if="hasPullPlanID" ng-click="gitExPullPlan()" class="btn btn-success" title="{{'EXECUTE' | translate}}"> Execute Plan ID: {{pullPlanID}}
+                              <i ng-if="!executing" class="fa fa-fw fa-bolt"></i>
+                              <i ng-if="executing" class="fa fa-refresh fa-spin"></i>
+                           </button>
+                        </span>
+                     </div>
+                  </form>
+               </div>
+            </uib-tab>
+            <uib-tab>
+               <uib-tab-heading>
+                  Pull Results
+               </uib-tab-heading>
+               <div class="card-bdy">
+                  <div class="row">
+                           <div class="col-md-12 text-center">
+                              <i ng-if="options.executing" class="fa fa-refresh fa-3x fa-spin"></i>
+                           </div>
+                        </div>
+                        <div class="card" ng-if="!options.executing && options.queryStatus">
+                           <div class="card-header" style="padding: 5px 10px;">
+                              <span>
+                                 <span style="margin-bottom:0px">
+                                 {} Result - Run in {{options.responseTimeMs | num:0}} ms</span>
+                              </span>
+                              <div class="pull-right">
+                                 <span>
+                                    <input type="radio" ng-model="options.resultType" value="json-tree" />
+                                    <span>JSON Tree</span>
+                                 </span>
+                                 <span>
+                                    <input type="radio" ng-model="options.resultType" value="json" />
+                                    <span>JSON</span>
+                                 </span>
+                                 <span>
+                                    <input type="radio" ng-model="options.resultType" value="hjson" />
+                                    <span>HJSON</span>
+                                 </span>
+                              </div>
+                           </div>
+                           <div class="card-body" ng-if="options.message">
+                              <div>
+                                 <button class="btn btn-warning">
+                                    <span class="fa fa-warning" aria-hidden="true"></span>
+                                    <span>{{options.message}}</span>
+                                 </button>
+                              </div>
+                           </div>
+                           <div class="card-body" ng-if="!options.message">
+                              <auto-height>
+                                 <json-formatter ng-if="options.resultType == 'json-tree'" json="options.resultQuery" open="1"></json-formatter>
+                                 <pre ng-if="options.resultType == 'json'">{{options.resultQuery | json}}</pre>
+                                 <pre ng-if="options.resultType == 'hjson'">{{options.resultQuery | hjson}}</pre>
+                              </auto-height>
+                           </div>
+                        </div>
+                  </div>
+            </uib-tab>
         </uib-tab>
        <uib-tab>
          <uib-tab-heading>
@@ -233,5 +349,10 @@
                </form>
          </div>
       </uib-tab>
+       <uib-tab>
+         <uib-tab-heading>
+            TM1 Project File
+         </uib-tab-heading>
+       </uib-tab>
    </uib-tabset>
 </div>

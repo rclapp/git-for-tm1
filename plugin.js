@@ -61,8 +61,18 @@ arc.directive("arcGit", function () {
               Password: ""
             }
 
+        $scope.pullPlanOptions = {
+          Branch: "master",
+          Force: true,
+          Username: "",
+          Password: "",
+            ExecutionMode:"SingleCommit"
+        }
+
          $scope.pushPlanID = null;
          $scope.hasPushPlanID = false;
+         $scope.pullPlanID = null;
+         $scope.hasPullPlanID = false;
          $scope.gitInitialized = false;
 
          $http.get(encodeURIComponent($scope.instance) + "/Configuration/ProductVersion/$value?$format=text/plain").then(function (value) {
@@ -158,6 +168,36 @@ arc.directive("arcGit", function () {
                 $scope.options.executing = false;
             });
         }
+        
+        $scope.gitPullPlan = function (branch, username, password, executionMode, force) {
+           $scope.pullPlanOptions.Password=password;
+           $scope.pullPlanOptions.Username=username;
+           $scope.pullPlanOptions.Branch=branch;
+           $scope.pullPlanOptions.ExecutionMode=executionMode;
+           $scope.pullPlanOptions.Force = (force == true);
+           console.log($scope.pullPlanOptions);
+           $scope.options.executing = true;
+            var restApiQuery = "/GitPull";
+            var sendDate = (new Date()).getTime();
+            $tm1.post($scope.instance, restApiQuery, $scope.pullPlanOptions).then(function (result) {
+               $scope.currentTabIndex = 0;
+                if (result.status == 200 || result.status == 201 || result.status == 204) {
+                    $scope.options.queryStatus = 'success';
+                    $scope.options.resultQuery = result.data;
+                    $scope.pullPlanID = $scope.options.resultQuery.ID;
+                    $scope.hasPullPlanID = true;
+                    $scope.options.message = null;
+                } else {
+                    $scope.options.queryStatus = 'failed';
+                    $scope.options.resultQuery = result.data.error;
+                    $scope.options.message = result.data.error.message;
+                    $scope.hasPullPlanID = false;
+                }
+                var receiveDate = (new Date()).getTime();
+                $scope.options.responseTimeMs = receiveDate - sendDate;
+                $scope.options.executing = false;
+            });
+        }
 
         $scope.gitExPushPlan = function () {
            $scope.options.executing = true;
@@ -183,12 +223,37 @@ arc.directive("arcGit", function () {
                 $scope.hasPushPlanID = false;
             });
         }
+        
+        $scope.gitExPullPlan = function () {
+           $scope.options.executing = true;
+            var restApiQuery = "/GitPlans('" + $scope.pullPlanID + "')/tm1.Execute";
+            var sendDate = (new Date()).getTime();
+            $tm1.post($scope.instance, restApiQuery, "{}").then(function (result) {
+               $scope.currentTabIndex = 0;
+                if (result.status == 200 || result.status == 201 || result.status == 204) {
+                    $scope.options.queryStatus = 'success';
+                    $scope.options.resultQuery = result.data;
+                    $scope.pushPlanID = $scope.options.resultQuery.ID;
+                    $scope.options.message = null;
+                    $scope.hasPullPlanID = false;
+                } else {
+                    $scope.options.queryStatus = 'failed';
+                    $scope.options.resultQuery = result.data.error;
+                    $scope.options.message = result.data.error.message;
+                    $scope.hasPullPlanID = false;
+                }
+                var receiveDate = (new Date()).getTime();
+                $scope.options.responseTimeMs = receiveDate - sendDate;
+                $scope.options.executing = false;
+                $scope.hasPullPlanID = false;
+            });
+        }
 
         $scope.$on("login-reload", function (event, args) {
 
          });
 
-         $scope.$on("close-tab", function (event, args) {
+        $scope.$on("close-tab", function (event, args) {
             // Event to capture when a user has clicked close on the tab
             if (args.page == "arcGit" && args.instance == $scope.instance && args.name == null) {
                // The page matches this one so close it
@@ -196,7 +261,7 @@ arc.directive("arcGit", function () {
             }
          });
 
-         $scope.$on("$destroy", function (event) {
+        $scope.$on("$destroy", function (event) {
 
          });
 
